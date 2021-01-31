@@ -14,30 +14,28 @@ local map = {
 	UI_INFO_MESSAGE = "information",
 	UI_ERROR_MESSAGE = "errors",
 }
+
+local spellInvokeErrorType = {
+	STUNNED = "Stunned",
+	SILENCED = "Silenced",
+	OUT_OF_RANGE = "Out of Range",
+	ON_CD = "On Cooldown"
+}
+
+local sounds = {
+
+    ["pop1"] = {
+        ["sound"] = "Interface\\AddOns\\SoundAlerts\\Sounds\\pop1.mp3",
+        ["description"] = "Pop sound 1!"
+    }
+}
+
 local originalOnEvent = UIErrorsFrame:GetScript("OnEvent")
 
 UIErrorsFrame:SetScript("OnEvent", function(self, event, ...)
 	print('hello ERROR.. from SoundAlerts OnEvent')
 	print(...)
-	print("1")
-	print(event)
-	print("2")
-	print(self)
-	print("3")
-	print(throttle)
-	print("done")
-	local messageType, message, r, g, b
-	message, r, g, b = ...
-	print(message)
-	print(r)
-	print(g)
-	print(b)
-	print(GetTime())
-	print(".....")
-	local test
-	start, duration, enabled, modRate = GetSpellCooldown("Freezing Trap")
-	local cdLeft = start + duration - GetTime()
- 	print("Trap is cooling down, wait " .. cdLeft .. " seconds for the next one.")
+	spellInvokeErrorFrame()
 	if addon.db.profile[map[event]] then
 		local messageType, message, r, g, b
 		if event == "SYSMSG" then
@@ -67,7 +65,7 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 				combat = false,
 			},
 		}, true)
-
+		
 		local args = {
 			type = "group",
 			handler = addon,
@@ -116,7 +114,7 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 			},
 		}
 		addon:SetSinkStorage(addon.db.profile)
-
+		
 		LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("SoundAlerts", args)
 		LibStub("AceConfigRegistry-3.0"):RegisterOptionsTable("SoundAlerts-Output", function() return addon:GetSinkAce3OptionsDataTable() end)
 		LibStub("AceConfigDialog-3.0"):AddToBlizOptions("SoundAlerts", "SoundAlerts")
@@ -127,6 +125,37 @@ frame:SetScript("OnEvent", function(self, event, addonName)
 		self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	end
 end)
+
+-- can flash the CD Count left, CC count left to the user in a frame (if you can say the timing left e.g. "3 on stun" | "2 on Silence")
+function spellInvokeErrorFrame()
+	print('spellInvokeErrorFrame fn')
+	PlaySoundFile(sounds.pop1.sound)
+	-- print("1")
+	-- print(event)
+	-- print("2")
+	-- print(self)
+	-- print("3")
+	-- print(throttle)
+	-- print("done")
+	-- local messageType, message, r, g, b
+	-- message, r, g, b = ...
+	-- print(message)
+	-- print(r)
+	-- print(g)
+	-- print(b)
+	-- print(GetTime())
+	-- print(".....")
+	-- local test
+	-- start, duration, enabled, modRate = GetSpellCooldown("Freezing Trap")
+	-- local cdLeft = start + duration - GetTime()
+	-- print("Trap is cooling down, wait " .. cdLeft .. " seconds for the next one.")
+end
+
+function playSound(soundType)
+	print('playSound fn')
+	print(soundType)
+end
+
 
 frame:RegisterEvent("ADDON_LOADED")
 
